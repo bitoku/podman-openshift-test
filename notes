@@ -1,0 +1,13 @@
+FROM quay.io/libpod/fedora_podman:latest
+RUN cd /var/tmp/go/src/github.com/containers && \
+	git clone https://github.com/containers/podman 
+
+RUN cd /var/tmp/go/src/github.com/containers/podman && DEST_BRANCH=main PRIV_NAME=root PODBIN_NAME=podman TEST_ENVIRON=host TEST_FLAVOR=sys \
+	CIRRUS_BASE_SHA=80534fbe593712468c9388166ce1808f037a1b0f CIRRUS_BASE_BRANCH=main contrib/cirrus/setup_environment.sh  || true
+
+RUN sed -i 's/driver = ""/driver = "overlay"/g' /etc/containers/storage.conf && \
+	echo root:2000:50000 > /etc/subuid && \
+	echo root:2000:50000 > /etc/subgid && \
+	make && \
+	printf '[engine]\nevents_logger = "file"' > /etc/containers/containers.conf
+

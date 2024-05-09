@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podman-test
+  annotations:
+    io.kubernetes.cri-o.Devices: "/dev/fuse"
+spec:
+  containers:
+  - name: podman-test
+    image: quay.io/libpod/fedora_podman
+    args:
+    - sleep
+    - "1000000"
+    securityContext:
+      runAsUser: 1000
+      seLinuxOptions:
+        type: "container_engine_t"
+

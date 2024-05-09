@@ -1,0 +1,32 @@
+FROM registry.fedoraproject.org/fedora:latest
+
+ENV UID="1000"
+ENV USER="user"
+ENV HOME="/home/${USER}"
+ENV BUILDAH_ISOLATION=chroot
+ENV XDG_RUNTIME_DIR="/run/user/${UID}"
+
+RUN yum -y install go bats git iproute gcc \
+		glib2-devel glibc-devel glibc-static golang git-core gpgme-devel libassuan-devel \
+		libgpg-error-devel libseccomp-devel libselinux-devel pkgconfig \
+		ostree-devel shadow-utils-subid-devel containers-common-extra file \
+		make man-db systemd systemd-devel catatonit conmon openssl git tar which shadow-utils bash wget jq podman buildah skopeo make socat nmap-ncat-2; \
+	rpm --restore shadow-utils ; \
+    yum clean all ; \
+    rm -rf /var/cache /var/log/dnf* /var/log/yum.*
+
+RUN mkdir -p "$HOME"/go/src/github.com/containers ; \
+    cd "$HOME"/go/src/github.com/containers ; \
+	git clone https://github.com/containers/podman ;
+
+RUN useradd --uid ${UID} ${USER} ; \
+    echo -e "${USER}:1:999\n${USER}:1001:64535" > /etc/subuid ; \
+    echo -e "${USER}:1:999\n${USER}:1001:64535" > /etc/subgid ; \
+    setcap cap_setuid+ep /usr/bin/newuidmap ; \
+    setcap cap_setgid+ep /usr/bin/newgidmap ; \
+    mkdir -p ${HOME}/.config/containers ; \
+    (echo '[containers]';echo 'volumes = ["/proc:/proc", "/sys:/sys"]';echo 'default_sysctls = []';echo '[engine]';echo 'cgroup_manager="cgroupfs"';echo 'events_logger = "file"';echo 'network_cmd_options=[';echo '  "enable_ipv6=false"';echo ']') > ${HOME}/.config/containers/containers.conf ; \
+	mkdir -p -m 700 ${XDG_RUNTIME_DIR} ; \
+    chown -R ${USER}:${USER} /home/${USER} ${XDG_RUNTIME_DIR} ;
+
+USER ${USER}
