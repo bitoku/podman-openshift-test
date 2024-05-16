@@ -10,7 +10,7 @@ RUN yum -y install go bats git iproute gcc \
 		glib2-devel glibc-devel glibc-static golang git-core gpgme-devel libassuan-devel \
 		libgpg-error-devel libseccomp-devel libselinux-devel pkgconfig \
 		ostree-devel shadow-utils-subid-devel containers-common-extra file \
-		make man-db systemd systemd-devel catatonit conmon openssl git tar which shadow-utils bash wget jq podman buildah skopeo make socat nc; \
+		make man-db systemd systemd-devel catatonit conmon openssl git tar which shadow-utils bash wget jq podman buildah skopeo make socat nc httpd-tools; \
 	rpm --restore shadow-utils ; \
     yum clean all ; \
     rm -rf /var/cache /var/log/dnf* /var/log/yum.*
@@ -38,6 +38,6 @@ RUN dnf -y install systemd dbus-daemon && dnf clean all && \
   rm -f /lib/systemd/system/sockets.target.wants/*initctl* ; \
   rm -f /lib/systemd/system/basic.target.wants/* ;\
   rm -f /lib/systemd/system/anaconda.target.wants/* ;\
-  cp /sbin/init /bin/init # to remove cri-o hack
+  link -s /sbin/init /usr/bin/init
 
-CMD ["/bin/init"]
+CMD ["/usr/bin/init"]

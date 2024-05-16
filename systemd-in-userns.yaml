@@ -8,6 +8,8 @@ spec:
   containers:
   - name: userns
     image: quay.io/haircommander/podman-system-tests:systemd
+    imagePullPolicy: Always
+    command: /sbin/init
     securityContext:
       runAsUser: 0
       seLinuxOptions:

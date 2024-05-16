@@ -37,3 +37,16 @@ spec:
         overwrite: true
         path: /etc/crio/crio.conf.d/99-allowed-devices.conf
   osImageURL: ""
+    #---
+    #apiVersion: machineconfiguration.openshift.io/v1
+    #kind: KubeletConfig
+    #metadata:
+    #  name: 99-sysctls
+    #spec:
+    #  machineConfigPoolSelector:
+    #    matchLabels:
+    #      pools.operator.machineconfiguration.openshift.io/worker: ""
+    #  kubeletConfig:
+    #    allowedUnsafeSysctls:
+    #    - net.ipv4.*
+    #    - net.ipv6.*
