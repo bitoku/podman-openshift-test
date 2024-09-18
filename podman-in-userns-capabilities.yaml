@@ -13,7 +13,9 @@ spec:
       runAsUser: 0
       seLinuxOptions:
         type: "container_engine_t"
+      procMount: Unmasked
       capabilities:
         add:
-          - "ALL"
+          - "SETUID"
+          - "SETGID"
   hostUsers: false

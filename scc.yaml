@@ -1,0 +1,25 @@
+allowedCapabilities:
+- "*"
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+    include.release.openshift.io/ibm-cloud-managed: "true"
+    include.release.openshift.io/self-managed-high-availability: "true"
+    include.release.openshift.io/single-node-developer: "true"
+    release.openshift.io/create-only: "true"
+    kubernetes.io/description: 'container-in-pod is made for users trying to run containers
+      inside of a pod, with another container engine like podman. It requires the use of a user namespace,
+      requires a special selinux type container_engine_t and allows any user.'
+  name: container-in-pod
+hostUsers: "Disallowed"
+seLinuxContext:
+  type: MustRunAs
+  seLinuxOptions:
+    type: "container_engine_t"
+fsGroup:
+  type: RunAsAny
+runAsUser:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny

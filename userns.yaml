@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: userns
+  annotations:
+    io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
+spec:
+  containers:
+  - name: userns
+    imagePullPolicy: Always
+    image: quay.io/crio/alpine
+    command: ["sleep", "10000"]
+  hostUsers: false
