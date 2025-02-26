@@ -20,16 +20,10 @@ spec:
         add:
           - "SETUID"
           - "SETGID"
+      appArmorProfile:
+        type: Unconfined
   hostUsers: false
   securityContext:
     sysctls:
     - name: net.ipv4.ping_group_range
       value: "0           1000"
-    - name: net.ipv4.conf.default.arp_notify
-      value: "1"
-    - name: net.ipv4.conf.default.route_localnet
-      value: "1"
-    - name: net.ipv4.ip_forward
-      value: "1"
-    - name: net.ipv4.conf.default.forwarding
-      value: "1"
