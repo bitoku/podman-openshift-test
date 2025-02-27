@@ -9,7 +9,7 @@ spec:
   containers:
   - name: nested-podman
     image: quay.io/rh-ee-atokubi/nested-podman
-    args: ["tail", "-f", "/dev/null"]
+    command: ["sleep", "100000"]
     imagePullPolicy: Always
     securityContext:
       runAsUser: 1000
