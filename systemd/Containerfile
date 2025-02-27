@@ -18,6 +18,7 @@ RUN yum -y install go bats git iproute gcc \
 RUN mkdir -p "$HOME"/go/src/github.com/containers ; \
     cd "$HOME"/go/src/github.com/containers ; \
 	git clone https://github.com/containers/podman ;
+RUN make bin/podman
 
 RUN useradd --uid ${UID} ${USER} ; \
     echo -e "${USER}:1:999\n${USER}:1001:64535" > /etc/subuid ; \

@@ -8,7 +8,7 @@ spec:
   hostUsers: false
   containers:
   - name: nested-podman
-    image: quay.io/haircommander/podman-system-tests
+    image: quay.io/rh-ee-atokubi/nested-podman
     args: ["tail", "-f", "/dev/null"]
     imagePullPolicy: Always
     securityContext:

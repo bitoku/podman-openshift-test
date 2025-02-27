@@ -3,15 +3,24 @@ FROM registry.fedoraproject.org/fedora:latest
 
 RUN dnf -y makecache && \
     dnf -y update && \
-    dnf -y install go bats git 'dnf-command(builddep)' iproute gcc \
-		glib2-devel glibc-devel glibc-static golang git-core gpgme-devel libassuan-devel \
-		libgpg-error-devel libseccomp-devel libselinux-devel pkgconfig \
-		ostree-devel shadow-utils-subid-devel containers-common-extra \
-		make man-db systemd systemd-devel catatonit conmon \
-		# from https://catalog.redhat.com/software/containers/ubi9-init/6183297540a2d8e95c82e8bd?architecture=amd64&image=65e0aca88b7d6c2795cea14c&container-tabs=dockerfile
-		procps-ng systemd && \
+    dnf -y install \
+	go \
+        bats \
+        git \
+        'dnf-command(builddep)' \
+        iproute \
+        gcc \
+	glib2-devel \
+	glibc-devel \
+	glibc-static golang git-core gpgme-devel libassuan-devel \
+	libgpg-error-devel libseccomp-devel libselinux-devel pkgconfig \
+	ostree-devel shadow-utils-subid-devel containers-common-extra \
+	make man-db systemd systemd-devel catatonit conmon \
+	skopeo \
+	# from https://catalog.redhat.com/software/containers/ubi9-init/6183297540a2d8e95c82e8bd?architecture=amd64&image=65e0aca88b7d6c2795cea14c&container-tabs=dockerfile
+	procps-ng systemd && \
 	dnf clean all && \
-    rm -rf /var/cache /var/log/dnf* /var/log/yum.* \
+    rm -rf /var/cache /var/log/dnf* /var/log/yum.* && \
 	rpm --restore shadow-utils
 
 
@@ -43,7 +52,8 @@ ADD /containers.conf /etc/containers/containers.conf
 ADD /podman-containers.conf /home/podman/.config/containers/containers.conf
 
 RUN mkdir -p /home/podman/go/src/github.com/containers && cd $_ && git clone https://github.com/containers/podman
-
+WORKDIR /home/podman/go/src/github.com/containers/podman
+RUN make bin/podman
 
 RUN mkdir -p /home/podman/.local/share/containers && \
     chown podman:podman -R /home/podman && \
