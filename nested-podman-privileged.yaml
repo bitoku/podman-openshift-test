@@ -1,11 +1,10 @@
 apiVersion: v1
 kind: Pod
 metadata:
- name: nested-podman-2
+ name: nested-podman-priv
  annotations:
    io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
 spec:
-  hostUsers: false
   containers:
   - name: nested-podman
     image: quay.io/rh-ee-atokubi/nested-podman
@@ -13,12 +12,10 @@ spec:
     imagePullPolicy: Always
     securityContext:
       runAsUser: 1000
-      procMount: Unmasked
       capabilities:
         add:
           - "SETUID"
           - "SETGID"
       seccompProfile:
         type: Unconfined
-      seLinuxOptions:
-        type: "container_engine_t"
+      privileged: true

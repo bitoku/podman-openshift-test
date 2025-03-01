@@ -130,5 +130,4 @@ RUN mkdir -p bin && \
 	cp /usr/bin/podman bin/podman && \
 	chown podman:podman bin/podman
 RUN mkdir -p /run/user/1000 && chown podman:podman $_
-RUN sed -i 's/utsns="host"/utsns="private"/' /etc/containers/containers.conf
 USER podman
