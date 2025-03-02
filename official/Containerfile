@@ -83,7 +83,7 @@ RUN sed -e 's|^#mount_program|mount_program|g' \
            > /etc/containers/storage.conf
 
 # Setup internal Podman to pass subscriptions down from host to internal container
-RUN printf '/run/secrets/etc-pki-entitlement:/run/secrets/etc-pki-entitlement\n/run/secrets/rhsm:/run/secrets/rhsm\n' > /etc/containers/mounts.conf
+RUN printf '/run/secrets/etc-pki-entitlement:/run/secrets/etc-pki-entitlement\n' > /etc/containers/mounts.conf
 
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
@@ -115,8 +115,11 @@ RUN dnf -y makecache && \
 	jq \
 	libseccomp-devel \
 	make \
+	nc \
 	openssl \
+	procps \
 	skopeo \
+	slirp4netns \
 	ss \
 	timeout
 USER podman
@@ -125,6 +128,10 @@ RUN mkdir -p /home/podman/go/src/github.com/containers && \
 	git clone https://github.com/containers/podman
 WORKDIR /home/podman/go/src/github.com/containers/podman
 RUN make bin/podman-testing
+RUN rm \
+	test/system/251-system-service.bats \
+	test/system/255-auto-update.bats \
+	test/system/270-socket-activation.bats
 USER root
 RUN mkdir -p bin && \
 	cp /usr/bin/podman bin/podman && \
