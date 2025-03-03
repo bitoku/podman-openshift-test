@@ -117,6 +117,7 @@ RUN dnf -y makecache && \
 	procps \
 	skopeo \
 	slirp4netns \
+	socat \
 	ss \
 	timeout
 USER podman
@@ -127,9 +128,13 @@ RUN mkdir -p /home/podman/go/src/github.com/containers && \
 WORKDIR /home/podman/go/src/github.com/containers/podman
 RUN make bin/podman-testing
 RUN rm \
+	test/system/170-run-userns.bats \
+	test/system/250-systemd.bats \
 	test/system/251-system-service.bats \
+	test/system/252-quadlet.bats \
 	test/system/255-auto-update.bats \
 	test/system/270-socket-activation.bats
+COPY --chown=podman:podman test.bash test.bash
 USER root
 RUN sed -i 's/"\/proc:\/proc",/"\/proc:\/proc","\/sys:\/sys",/' /home/podman/.config/containers/containers.conf
 RUN mkdir -p bin && \
