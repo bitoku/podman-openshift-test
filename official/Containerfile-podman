@@ -99,6 +99,7 @@ RUN mkdir -p /var/lib/shared/overlay-images \
     touch /var/lib/shared/vfs-images/images.lock && \
     touch /var/lib/shared/vfs-layers/layers.lock
 
+ENV _CONTAINERS_USERNS_CONFIGURED=""
 RUN dnf -y makecache && \
 	dnf -y update && \
 	dnf install -y \
@@ -120,18 +121,12 @@ RUN dnf -y makecache && \
 	ss \
 	timeout
 USER podman
-RUN mkdir -p /home/podman/go/src/github.com/containers && \
-	cd $_ && \
-	git clone https://github.com/containers/podman
-# COPY --chown podman:podman podman /home/podman/go/src/github.com/containers/podman
+COPY --chown=podman podman /home/podman/go/src/github.com/containers/podman
 WORKDIR /home/podman/go/src/github.com/containers/podman
+RUN rm -rf test/system 
 RUN make bin/podman-testing
-RUN rm \
-	test/system/251-system-service.bats \
-	test/system/255-auto-update.bats \
-	test/system/270-socket-activation.bats
+COPY --chown=podman podman/test/system /home/podman/go/src/github.com/containers/podman/test/system
 USER root
-RUN sed -i 's/"\/proc:\/proc",/"\/proc:\/proc","\/sys:\/sys",/' /home/podman/.config/containers/containers.conf
 RUN mkdir -p bin && \
 	cp /usr/bin/podman bin/podman && \
 	chown podman:podman bin/podman

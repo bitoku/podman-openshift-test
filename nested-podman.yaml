@@ -1,11 +1,15 @@
 apiVersion: v1
 kind: Pod
 metadata:
- name: nested-podman-2
+ name: nested-podman
  annotations:
    io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
 spec:
   hostUsers: false
+  dnsPolicy: None
+  dnsConfig:
+    nameservers:
+      - 1.1.1.1
   containers:
   - name: nested-podman
     image: quay.io/rh-ee-atokubi/nested-podman
