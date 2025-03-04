@@ -35,13 +35,13 @@ insert_skip 030-run.bats 'podman run --privileged as rootless will not mount /de
 
 # Can't handle signal properly
 insert_skip 030-run.bats "podman run - stopping loop"
-insert_skip 055-rm.bats "podman container rm doesn't affect stopping containers"
-insert_skip 055-rm.bats "podman container rm --force doesn't leave running processes"
 insert_skip 065-cp.bats "podman cp file from/to host while --pid=host"
 insert_skip 220-healthcheck.bats "podman healthcheck --health-on-failure with interval"
 insert_skip 195-run-namespaces.bats "podman test all namespaces"
 
 # healthcheck (systemd or signal)
+insert_skip 055-rm.bats "podman container rm doesn't affect stopping containers"
+insert_skip 055-rm.bats "podman container rm --force doesn't leave running processes"
 insert_skip 220-healthcheck.bats "podman healthcheck"
 insert_skip 220-healthcheck.bats "podman healthcheck - stop container when healthcheck runs"
 insert_skip 700-play.bats "podman kube play healthcheck should wait initialDelaySeconds before updating status"
