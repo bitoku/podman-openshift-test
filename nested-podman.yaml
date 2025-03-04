@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
- name: nested-podman
+ name: nested-podman2
  annotations:
    io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
 spec:
