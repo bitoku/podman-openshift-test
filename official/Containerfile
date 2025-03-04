@@ -115,11 +115,13 @@ RUN dnf -y makecache && \
 	nc \
 	openssl \
 	procps \
+	python-yaml \
 	skopeo \
 	slirp4netns \
 	socat \
 	ss \
 	timeout
+RUN echo 'alias ps="ps --no-headers"' >> ~/.bashrc
 USER podman
 RUN mkdir -p /home/podman/go/src/github.com/containers && \
 	cd $_ && \
@@ -130,7 +132,6 @@ RUN make bin/podman-testing
 COPY --chown=podman:podman test.bash test.bash
 RUN ./test.bash
 USER root
-RUN sed -i 's/"\/proc:\/proc",/"\/proc:\/proc","\/sys:\/sys",/' /home/podman/.config/containers/containers.conf
 RUN mkdir -p bin && \
 	cp /usr/bin/podman bin/podman && \
 	chown podman:podman bin/podman
