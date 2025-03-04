@@ -31,7 +31,7 @@ insert_skip 200-pod.bats "podman pod create - hashtag AllTheOptions"
 insert_skip 030-run.bats "podman run - /run must not be world-writable in systemd containers"
 
 # There is only one tty - /dev/tty
-insert_skip 030-run.bats 'podman run --privileged as rootless will not mount /dev/tty\d+'
+insert_skip 030-run.bats 'podman run --privileged as rootless will not mount /dev/tty\\d+'
 
 # Can't handle signal properly
 insert_skip 030-run.bats "podman run - stopping loop"
@@ -90,4 +90,4 @@ insert_skip 090-events.bats "events with disjunctive filters - journald"
 insert_skip 090-events.bats "events - container inspect data - journald"
 insert_skip 220-healthcheck.bats "podman healthcheck --health-log-destination journal"
 insert_skip 420-cgroups.bats "podman run, preserves initial --cgroup-manager"
-insert_skip 700-play.bats "pasta(1) quits when the namespace is gone" # zombie process is not handled
+insert_skip 505-networking-pasta.bats "pasta(1) quits when the namespace is gone" # zombie process is not handled
