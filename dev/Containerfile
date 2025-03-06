@@ -1,14 +1,8 @@
 FROM registry.access.redhat.com/ubi9
-ARG USER_HOME_DIR="/home/user"
-ARG WORK_DIR="/projects"
-ENV HOME=${USER_HOME_DIR}
 ENV BUILDAH_ISOLATION=chroot
 RUN dnf --disableplugin=subscription-manager install -y openssl compat-openssl11 libbrotli git tar shadow-utils bash zsh podman buildah skopeo ; \
     dnf update -y ; \
     dnf clean all ; \
-    mkdir -p ${USER_HOME_DIR} ; \
-    mkdir -p ${WORK_DIR} ; \
-    chgrp -R 0 /home ; \
     #
     # Setup for root-less podman
     #
@@ -26,14 +20,10 @@ RUN useradd podman && \
     echo -e "podman:1:999\npodman:1001:64535" > /etc/subgid
 # Copy & modify the defaults to provide reference if runtime changes needed.
 # Changes here are required for running with fuse-overlay storage inside container.
-RUN sed -e 's|^#mount_program|mount_program|g' \
+RUN sed -i -e 's|^#mount_program|mount_program|g' \
            -e '/additionalimage.*/a "/var/lib/shared",' \
            -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' \
-           /usr/share/containers/storage.conf \
-           > /etc/containers/storage.conf
-WORKDIR ${WORK_DIR}
-ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "tail", "-f", "/dev/null" ]
+           /etc/containers/storage.conf
 
 RUN dnf -y makecache && \
         dnf -y update && \
@@ -52,20 +42,25 @@ RUN dnf -y makecache && \
         python-yaml \
         skopeo \
         slirp4netns \
-        socat
+        socat \
+	xz
 RUN git clone https://github.com/bats-core/bats-core.git && \
 	cd bats-core && \
 	./install.sh /usr/local
-RUN mkdir -p ${USER_HOME_DIR}/go/src/github.com/containers && \
+USER podman
+RUN mkdir -p /home/podman/go/src/github.com/containers && \
         cd $_ && \
         git clone https://github.com/containers/podman
-# COPY --chown podman:podman podman /home/podman/go/src/github.com/containers/podman
-COPY --chown=0:0 entrypoint.sh /
-WORKDIR ${USER_HOME_DIR}/go/src/github.com/containers/podman
-RUN make bin/podman-testing
+WORKDIR /home/podman/go/src/github.com/containers/podman
+RUN make bin/podman-testing && make bin/podman
+COPY --chown=podman:podman --chmod=755 entrypoint.sh /
 COPY test.bash test.bash
 RUN ./test.bash
-RUN chown 1000:0 -R ${USER_HOME_DIR}
-RUN mkdir -p /run/user/1000 && chown 1000:0 /run/user/1000
-USER 1000:0
-RUN cp /usr/bin/podman bin/podman
+USER root
+RUN mkdir -p /run/user/1000 && chown podman:podman $_
+ADD /containers.conf /etc/containers/containers.conf
+RUN mkdir -p /home/podman/.local/share/containers && \
+    chown podman:podman -R /home/podman && \
+    chmod 644 /etc/containers/containers.conf
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "tail", "-f", "/dev/null" ]

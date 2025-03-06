@@ -136,4 +136,6 @@ RUN mkdir -p bin && \
 	cp /usr/bin/podman bin/podman && \
 	chown podman:podman bin/podman
 RUN mkdir -p /run/user/1000 && chown podman:podman $_
+RUN chmod +s /usr/bin/newuidmap
+RUN chmod +s /usr/bin/newgidmap
 USER podman

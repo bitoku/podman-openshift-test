@@ -13,13 +13,13 @@ function insert_skip {
 }
 
 # /home/podman/go/src/github.com/containers/podman/test/system/helpers.bash: line 1117: /usr/bin/expr: Argument list too long
-insert_skip 200-pod.bats "podman pod top - containers in different PID namespaces"
+# insert_skip 200-pod.bats "podman pod top - containers in different PID namespaces"
 
 # can't finish
-insert_skip 700-play.bats "podman kube play --wait with siginterrupt"
+# insert_skip 700-play.bats "podman kube play --wait with siginterrupt"
 
 # FAIL: Pause process 42825 is still running even after podman system migrate
-insert_skip 550-pause-process.bats "rootless podman only ever uses single pause process"
+# insert_skip 550-pause-process.bats "rootless podman only ever uses single pause process"
 
 # mount not shown
 insert_skip 160-volumes.bats "podman run --volumes : basic"
