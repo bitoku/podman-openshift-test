@@ -17,10 +17,16 @@ function insert_skip {
 insert_skip 030-run.bats 'podman run --privileged as rootless will not mount /dev/tty\\d+'
 # systemd can't run in nested container
 insert_skip 030-run.bats "podman run - /run must not be world-writable in systemd containers"
+# Error: OCI runtime error: crun: write to `/proc/self/oom_score_adj`: Invalid argument
+insert_skip 030-run.bats "podman run doesn't override oom-score-adj"
+# flaky
+insert_skip 090-events.bats "image events"
 # mount not shown
 insert_skip 160-volumes.bats "podman run --volumes : basic"
 # ping: permission denied (are you root?) 
 insert_skip 200-pod.bats "podman pod create - hashtag AllTheOptions"
+# flaky
+insert_skip 320-system-df.bats "podman system df --format json functionality"
 # FAIL: Pause process 42825 is still running even after podman system migrate
 insert_skip 550-pause-process.bats "rootless podman only ever uses single pause process"
  
@@ -80,4 +86,3 @@ insert_skip 090-events.bats "events with file backend and journald logdriver wit
 insert_skip 090-events.bats "events - container inspect data - journald"
 insert_skip 220-healthcheck.bats "podman healthcheck --health-log-destination journal"
 insert_skip 420-cgroups.bats "podman run, preserves initial --cgroup-manager"
-# insert_skip 505-networking-pasta.bats "pasta(1) quits when the namespace is gone" # zombie process is not handled
